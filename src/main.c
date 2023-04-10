@@ -10,7 +10,7 @@
 //uint8_t dht11_check_response(void);
 //uint8_t dht11_read_byte(void);
 //
-///*-------------------UART Functions----------------------*/
+/*-------------------UART Functions----------------------*/
 //void UART_init(void) {
 //    /* Set Baud Rate*/
 //    UBRR0H = (unsigned char) (BAUD_PRESCALER>>8);
@@ -37,7 +37,7 @@
 //    }
 //}
 //
-///*-----------------------------------------*/
+/*-----------------------------------------*/
 //
 //void Initialize() {
 //    // Set PD2 as output
@@ -150,16 +150,50 @@
 #include <avr/interrupt.h>
 
 #define F_CPU 16000000UL
+#define BAUD_RATE 9600
+#define BAUD_PRESCALER (((F_CPU / (BAUD_RATE * 16UL))) - 1)
 
 #define SERVO_PIN PB1
 #define SERVO_MIN 1000
 #define SERVO_MAX 2000
 
+char String[25];
+//uint16_t pos = 0;
+
+/*-------------------UART Functions----------------------*/
+void UART_init(void) {
+    /* Set Baud Rate*/
+    UBRR0H = (unsigned char) (BAUD_PRESCALER>>8);
+    UBRR0L = (unsigned char) BAUD_PRESCALER;
+    // Enable receiver and transmitter
+    UCSR0B = (1<<RXEN0) | (1<<TXEN0);
+
+   /* Set Frame Format*/
+    UCSR0C = (1<<UCSZ01) | (1<<UCSZ00); // 8 data bits
+    UCSR0C |= (1<<USBS0); // 2 stop bits
+}
+
+void UART_send(unsigned char data) {
+    // Wait for empty transmit buffer
+    while (!(UCSR0A & (1<<UDRE0)));
+    // Put data into buffer and send data
+    UDR0 = data;
+}
+
+void UART_putstring(char* StringPtr) {
+    while(*StringPtr != 0x00) {
+        UART_send(*StringPtr);
+        StringPtr++;
+    }
+}
+
+/*-----------------------------------------*/
+
 void Initialize() {
     cli();
 
     // ADC Setup
-    DDRC &= ~(1<<DDC1); // Set AC0 pin
+    DDRC &= ~(1<<DDC0); // Set AC0 pin
 
     // Clear power reduction for ADC
     PRR &= ~(1<<PRADC);
@@ -230,23 +264,40 @@ uint16_t getPosition() {
     uint16_t pos;
     if (ADC >= 1000) {
         pos = 2000;
+//    } else if (ADC >= 333 && ADC <= 666) {
+//        pos = 1500;
     } else {
-        pos = ADC+1000;
+        pos = ADC + 1000;
     }
-    return pos;
+
+    return  pos;
+//    _delay_ms(200);
+//    sprintf(String, "ADC: %u\n", ADC);
+//    UART_putstring(String);
+//    sprintf(String, "Position: %d\n", pos);
+//    UART_putstring(String);
+
+
 }
 
 int main() {
     Initialize();
+    UART_init();
 
     // Initialize the servo
     servo_init();
 
+//    sprintf(String, "hello");
+//    UART_putstring(String);
+
     // Move the servo back and forth
     while (1) {
-        // Move to the minimum position (1000us)
+//        _delay_ms(1000);
+//        getPosition();
         servo_write_us(getPosition());
-        _delay_ms(50);
+//        sprintf(String, "hello \n");
+//        UART_putstring(String);
+        _delay_ms(1000);
 
     }
 }
