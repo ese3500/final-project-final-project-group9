@@ -50,8 +50,9 @@
 #define BLYNK_AUTH_TOKEN "YrXxe14WVH0zWcnFWcMAveoePrWLNqhO"
 
 
-#include <ESP8266WiFi.h>
-#include <BlynkSimpleEsp8266.h>
+#include <WiFi.h>
+#include <WiFiClient.h>
+#include <BlynkSimpleEsp32.h>
 
 // You should get Auth Token in the Blynk App.
 // Go to the Project Settings (nut icon).
@@ -59,8 +60,8 @@ char auth[] = BLYNK_AUTH_TOKEN;
 
 // Your WiFi credentials.
 // Set password to "" for open networks.
-char ssid[] = "AirPennNet-Device";
-char pass[] = "penn1740wifi";
+char ssid[] = "Samsung Galaxy S10+";
+char pass[] = "mahim123";
 
 
 // This function is called every time the device is connected to the Blynk.Cloud
@@ -74,13 +75,14 @@ BLYNK_CONNECTED()
 
 BLYNK_WRITE(V0) {
   int up = param.asInt();
+  Serial.println(up);
   analogWrite(A0, up);
 }
 
 void setup()
 {
   // Debug console
-  Serial.begin(9600);
+  Serial.begin(115200);
   pinMode(16, OUTPUT);
   Blynk.begin(auth, ssid, pass);
 }
