@@ -1,14 +1,14 @@
-////
-//// Created by Abir Hossain on 4/7/23.
-////
 //
-//#ifndef UART_H
-//#define UART_H
+// Created by Abir Hossain on 4/7/23.
 //
-//void UART_init(int prescale);
-//
-//void UART_send( unsigned char data);
-//
-//void UART_putstring(char* StringPtr);
-//
-//#endif
+
+#ifndef UART_H
+#define UART_H
+
+void UART_init(int prescale);
+
+void UART_send( unsigned char data);
+
+void UART_putstring(char* StringPtr);
+
+#endif

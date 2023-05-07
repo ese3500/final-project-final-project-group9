@@ -8,10 +8,6 @@
 #define BAUD_RATE 9600
 #define BAUD_PRESCALER (((F_CPU / (BAUD_RATE * 16UL))) - 1)
 
-#define SERVO_PIN PB1
-#define SERVO_MIN 1000
-#define SERVO_MAX 2000
-
 uint16_t pos = 1400;
 
 void Initialize() {
